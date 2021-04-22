@@ -13,10 +13,12 @@ String randomSseClientId() {
 abstract class SseClient extends StreamChannelMixin<String> {
   Future<void> get onConnected;
   String get clientId;
-  static SseClient? _instance;
 
-  static SseClient getInstance(String serverUrl) {
-    _instance ??= getSseClient(serverUrl);
-    return _instance!;
+  /// Returns a new [SseClient]
+  factory SseClient.fromUrl(String serverUrl) {
+    return getSseClient(serverUrl);
   }
+
+  /// Closes the [SseClient]
+  void close();
 }

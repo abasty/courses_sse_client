@@ -73,10 +73,11 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
     );
   }
 
+  @override
   void close() {
     // If the initial connection was never established. Add a listener so close
     // adds a done event to [sink].
-    // if (!_onConnected.isCompleted) _outgoingController.stream.drain();
+    if (!_onConnected.isCompleted) _outgoingController.stream.drain();
     _incomingController.close();
     _outgoingController.close();
   }

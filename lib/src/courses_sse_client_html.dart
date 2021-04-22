@@ -89,6 +89,7 @@ class SseClientHtml extends StreamChannelMixin<String> implements SseClient {
   @override
   Stream<String> get stream => _incomingController.stream;
 
+  @override
   void close() {
     _eventSource.close();
     // If the initial connection was never established. Add a listener so close
