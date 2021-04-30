@@ -50,12 +50,20 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
               response.stream
                   .transform(utf8.decoder)
                   .transform(LineSplitter())
-                  .listen((str) {
-                if (str.startsWith('data: ')) {
-                  str = str.substring(7, str.length - 1).replaceAll('\\"', '"');
-                  _incomingController.sink.add(str);
-                }
-              });
+                  .listen(
+                (str) {
+                  if (str.startsWith('data: ')) {
+                    str =
+                        str.substring(7, str.length - 1).replaceAll('\\"', '"');
+                    _incomingController.sink.add(str);
+                  }
+                },
+                onDone: () {
+                  // If the response stream is closed, close the sink controller
+                  _incomingController.sink.close();
+                },
+                cancelOnError: true,
+              );
             } else {
               _incomingController
                   .addError(Exception('Failed to connect to $_serverUrl'));
