@@ -33,19 +33,20 @@ void main() {
 
   test('SseClient déconnexion', () async {
     const sse_url = 'http://$host/sync';
-    var client;
     var data = <String>[];
     var closed = Completer<String>();
-    client = SseClient.fromUrl(sse_url)
-      ..stream.listen((event) => data.add(event), cancelOnError: true,
-          onDone: () {
-        if (!closed.isCompleted) closed.complete('Connexion interrompue');
-      });
+    var client = SseClient.fromUrl(sse_url)
+      ..stream.listen(
+        (event) => data.add(event),
+        cancelOnError: true,
+        onDone: () {
+          if (!closed.isCompleted) closed.complete('Connexion interrompue');
+        },
+      );
     await client.onConnected;
     unawaited(Future.delayed(Duration(seconds: 10))
         .whenComplete(() => closed.complete('Timeout expiré')));
-    var str = await closed.future;
-    print(str);
+    print(await closed.future);
     client.close();
   });
 }
