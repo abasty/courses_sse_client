@@ -59,8 +59,8 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
                   }
                 },
                 onDone: () {
-                  // If the response stream is closed, close the sink controller
-                  _incomingController.sink.close();
+                  // If the response stream is closed, close the controllers
+                  close();
                 },
                 cancelOnError: true,
               );

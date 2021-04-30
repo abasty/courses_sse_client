@@ -57,8 +57,8 @@ class SseClientHtml extends StreamChannelMixin<String> implements SseClient {
       if (!(_errorTimer?.isActive ?? false)) {
         // By default the SSE client uses keep-alive.
         // Allow for a retry to connect before giving up.
-        _errorTimer = Timer(const Duration(seconds: 5), () {
-          _incomingController.addError(error);
+        // abasty a changé le timer à 0 pour l'article
+        _errorTimer = Timer(const Duration(seconds: 0), () {
           close();
           if (!_onConnected.isCompleted) {
             // This call must happen after the call to close() which checks
