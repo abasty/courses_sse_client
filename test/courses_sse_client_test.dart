@@ -18,20 +18,35 @@ Future<Object> fetchData(String uri) async {
 }
 
 void main() {
-  test('SseClient connexion', () async {
+  test('Connexion', () async {
     const sse_url = 'http://$host/sync';
-    var client;
     var data = <String>[];
-    client = SseClient.fromUrl(sse_url)
+    var client = SseClient.fromUrl(sse_url)
       ..stream.listen((event) => data.add(event), cancelOnError: true);
-    await client.onConnected;
-    client.close();
     var client2 = SseClient.fromUrl(sse_url)
       ..stream.listen((event) => data.add(event), cancelOnError: true);
+    await client.onConnected;
+    await client2.onConnected;
     assert(client != client2);
+    client.close();
+    client2.close();
   });
 
-  test('SseClient déconnexion', () async {
+  test('Déconnexion client', () async {
+    const sse_url = 'http://$host/sync';
+    var data = <String>[];
+    var client = SseClient.fromUrl(sse_url)
+      ..stream.listen(
+        (event) => data.add(event),
+        cancelOnError: true,
+      );
+    await client.onConnected;
+    await Future.delayed(Duration(seconds: 2));
+    client.close();
+    await Future.delayed(Duration(seconds: 2));
+  });
+
+  test('Arrêt manuel du serveur', () async {
     const sse_url = 'http://$host/sync';
     var data = <String>[];
     var closed = Completer<String>();

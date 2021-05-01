@@ -88,6 +88,7 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
     if (!_onConnected.isCompleted) _outgoingController.stream.drain();
     _incomingController.close();
     _outgoingController.close();
+    _client.close();
   }
 
   @override
