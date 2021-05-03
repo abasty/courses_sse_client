@@ -25,7 +25,7 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
   @override
   Stream<String> get stream => _incomingController.stream;
 
-  late final StreamController<String> _incomingController;
+  var _incomingController = StreamController<String>();
   final _outgoingController = StreamController<String>();
   // final _logger = Logger('SseClient');
   final _onConnected = Completer();
@@ -45,6 +45,7 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
       ..headers['Accept'] = 'text/event-stream';
 
     try {
+      // await _incomingController.close();
       var response = await _client.send(request);
       if (response.statusCode != 200) throw 'Network error';
       _onConnected.complete();
@@ -71,10 +72,10 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
         },
       );
     } catch (e) {
-      close();
       if (!_onConnected.isCompleted) {
         _onConnected.completeError('error');
       }
+      close();
     }
   }
 
@@ -84,7 +85,7 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
     // adds a done event to [sink].
     if (!_onConnected.isCompleted) _outgoingController.stream.drain();
     _outgoingController.close();
-    if (_onConnected.isCompleted) _incomingController.close();
+    _incomingController.close();
     _client.close();
   }
 
