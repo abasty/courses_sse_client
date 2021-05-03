@@ -7,6 +7,7 @@ import 'package:pedantic/pedantic.dart';
 import 'package:test/test.dart';
 
 const host = 'localhost:8067';
+const sse_url = 'http://$host/sync';
 
 Future<Object> fetchData(String uri) async {
   var response = await http.get(Uri.http(host, uri));
@@ -19,46 +20,42 @@ Future<Object> fetchData(String uri) async {
 
 void main() {
   test('Connexion', () async {
-    const sse_url = 'http://$host/sync';
     var data = <String>[];
-    var client = SseClient.fromUrl(sse_url)
-      ..stream.listen((event) => data.add(event), cancelOnError: true);
-    var client2 = SseClient.fromUrl(sse_url)
-      ..stream.listen((event) => data.add(event), cancelOnError: true);
+    var client = SseClient.fromUrl(sse_url);
     await client.onConnected;
+    client.stream.listen((event) => data.add(event), cancelOnError: true);
+    var client2 = SseClient.fromUrl(sse_url);
     await client2.onConnected;
-    assert(client != client2);
+    client2.stream.listen((event) => data.add(event), cancelOnError: true);
     client.close();
     client2.close();
   });
 
   test('Déconnexion client', () async {
-    const sse_url = 'http://$host/sync';
     var data = <String>[];
-    var client = SseClient.fromUrl(sse_url)
-      ..stream.listen(
-        (event) => data.add(event),
-        cancelOnError: true,
-      );
+    var client = SseClient.fromUrl(sse_url);
     await client.onConnected;
+    client.stream.listen(
+      (event) => data.add(event),
+      cancelOnError: true,
+    );
     await Future.delayed(Duration(seconds: 2));
     client.close();
     await Future.delayed(Duration(seconds: 2));
   });
 
   test('Arrêt manuel du serveur', () async {
-    const sse_url = 'http://$host/sync';
     var data = <String>[];
     var closed = Completer<String>();
-    var client = SseClient.fromUrl(sse_url)
-      ..stream.listen(
-        (event) => data.add(event),
-        cancelOnError: true,
-        onDone: () {
-          if (!closed.isCompleted) closed.complete('Connexion interrompue');
-        },
-      );
+    var client = SseClient.fromUrl(sse_url);
     await client.onConnected;
+    client.stream.listen(
+      (event) => data.add(event),
+      cancelOnError: true,
+      onDone: () {
+        if (!closed.isCompleted) closed.complete('Connexion interrompue');
+      },
+    );
     unawaited(Future.delayed(Duration(seconds: 10))
         .whenComplete(() => closed.complete('Timeout expiré')));
     print(await closed.future);
