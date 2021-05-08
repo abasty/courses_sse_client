@@ -49,7 +49,7 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
       var response = await _client.send(request);
       if (response.statusCode != 200) throw 'Network error';
       _onConnected.complete();
-      _incomingController = StreamController<String>.broadcast(
+      _incomingController = StreamController<String>(
         onListen: () {
           response.stream
               .transform(utf8.decoder)
