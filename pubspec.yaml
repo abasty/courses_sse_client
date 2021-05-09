@@ -14,3 +14,11 @@ dependencies:
 dev_dependencies:
   test:
   pedantic: ^1.11.0
+  restserver:
+    git: git@github.com:abasty/restserver.git
+  shelf:
+  shelf_router:
+  sse:
+    git:
+        url: git@github.com:dart-lang/sse.git
+        ref: null_safety
