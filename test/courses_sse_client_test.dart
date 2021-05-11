@@ -78,7 +78,7 @@ const host_url = '$host:$port';
 const port = '8002';
 const sse_url = 'http://$host_url/sync';
 
-var sse_server;
+var sse_server = SseHandler(Uri.parse('/sync'));
 
 class DbEmptyAdaptor implements DbAdaptor {
   @override
@@ -92,7 +92,7 @@ Future<HttpServer> local_server() async {
   db = CacheDb(DbEmptyAdaptor());
   await db.isLoaded;
 
-  sse_server = SseHandler(Uri.parse('/sync'));
+  //sse_server = SseHandler(Uri.parse('/sync'));
   courses_sse.listen(sse_server);
 
   final cascade = Cascade().add(courses_sse).add(sse_server.handler);
