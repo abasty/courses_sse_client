@@ -28,14 +28,14 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.6.1"
+    version: "2.7.0"
   basic_utils:
     dependency: transitive
     description:
       name: basic_utils
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.2"
+    version: "3.1.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -98,7 +98,7 @@ packages:
       name: file
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.0"
+    version: "6.1.1"
   fixnum:
     dependency: transitive
     description:
@@ -272,7 +272,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: d7c88e8a09fcc786cb73a4fc414842c00185d389
+      resolved-ref: f9ad8b9c7bc8833e345b3552493530b3b4fb3824
       url: "git@github.com:abasty/restserver.git"
     source: git
     version: "3.0.0"
@@ -282,7 +282,7 @@ packages:
       name: shelf
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.2"
+    version: "1.1.4"
   shelf_packages_handler:
     dependency: transitive
     description:
@@ -335,12 +335,10 @@ packages:
   sse:
     dependency: "direct dev"
     description:
-      path: "."
-      ref: null_safety
-      resolved-ref: b6255efbfa84299faf1faca77c5d8548829c10a3
-      url: "git@github.com:dart-lang/sse.git"
-    source: git
-    version: "3.8.3"
+      name: sse
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.0"
   stack_trace:
     dependency: transitive
     description:
@@ -375,7 +373,7 @@ packages:
       name: test
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.17.3"
+    version: "1.17.4"
   test_api:
     dependency: transitive
     description:
@@ -389,7 +387,7 @@ packages:
       name: test_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.23"
+    version: "0.3.24"
   typed_data:
     dependency: transitive
     description:
