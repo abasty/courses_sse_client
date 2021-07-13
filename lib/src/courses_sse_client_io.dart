@@ -6,7 +6,7 @@ import 'package:stream_channel/stream_channel.dart';
 
 import '../courses_sse_client.dart';
 
-SseClient getSseClient(String serverUrl) => SseClientIo(serverUrl);
+SseClient getSseClient(Uri uri, String path) => SseClientIo(uri, path);
 
 class SseClientIo extends StreamChannelMixin<String> implements SseClient {
   @override
@@ -31,11 +31,13 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
   final _onConnected = Completer();
   // int _lastMessageId = -1;
   late String _serverUrl;
+  final Uri _uri;
+  final String _path;
   final _client = http.Client();
   final _clientId = randomSseClientId();
 
-  SseClientIo(String serverUrl) {
-    _serverUrl = '$serverUrl?sseClientId=$_clientId';
+  SseClientIo(this._uri, this._path) {
+    _serverUrl = _uri.toString() + _path + '?sseClientId=$_clientId';
     connect();
   }
 

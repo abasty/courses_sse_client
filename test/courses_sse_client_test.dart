@@ -15,10 +15,10 @@ void main() async {
 
   test('Connexion', () async {
     var data = <String>[];
-    var client = SseClient.fromUrl(sse_url);
+    var client = SseClient.fromUriAndPath(uri, path);
     await client.onConnected;
     client.stream.listen((event) => data.add(event), cancelOnError: true);
-    var client2 = SseClient.fromUrl(sse_url);
+    var client2 = SseClient.fromUriAndPath(uri, path);
     await client2.onConnected;
     client2.stream.listen((event) => data.add(event), cancelOnError: true);
     client.close();
@@ -29,7 +29,7 @@ void main() async {
     'Déconnexion client',
     () async {
       var data = <String>[];
-      var client = SseClient.fromUrl(sse_url);
+      var client = SseClient.fromUriAndPath(uri, path);
       var closed = Completer<String>();
       await client.onConnected;
       client.stream.listen(
@@ -53,7 +53,7 @@ void main() async {
     () async {
       var data = <String>[];
       var closed = Completer<String>();
-      var client = SseClient.fromUrl(sse_url);
+      var client = SseClient.fromUriAndPath(uri, path);
       await client.onConnected;
       client.stream.listen(
         (event) => data.add(event),
@@ -76,7 +76,8 @@ void main() async {
 const host = 'localhost';
 const host_url = '$host:$port';
 const port = '8002';
-const sse_url = 'http://$host_url/sync';
+const path = '/sync';
+var uri = Uri.parse('http://$host_url');
 
 var sse_server = SseHandler(Uri.parse('/sync'));
 
@@ -92,7 +93,6 @@ Future<HttpServer> local_server() async {
   db = CacheDb(DbEmptyAdaptor());
   await db.isLoaded;
 
-  //sse_server = SseHandler(Uri.parse('/sync'));
   courses_sse.listen(sse_server);
 
   final cascade = Cascade().add(courses_sse).add(sse_server.handler);

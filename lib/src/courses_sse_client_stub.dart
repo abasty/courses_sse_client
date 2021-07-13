@@ -1,4 +1,4 @@
 import '../courses_sse_client.dart';
 
-SseClient getSseClient(String serverUrl) =>
+SseClient getSseClient(Uri uri, String path) =>
     throw UnsupportedError("SseClient n'a pas d'implémentation");

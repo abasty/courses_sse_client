@@ -11,7 +11,7 @@ import 'package:stream_channel/stream_channel.dart';
 
 import '../courses_sse_client.dart';
 
-SseClient getSseClient(String serverUrl) => SseClientHtml(serverUrl);
+SseClient getSseClient(Uri uri, String path) => SseClientHtml(uri, path);
 
 /// A client for bi-directional sse communcation.
 ///
@@ -31,6 +31,8 @@ class SseClientHtml extends StreamChannelMixin<String> implements SseClient {
   late final EventSource _eventSource;
 
   late final String _serverUrl;
+  final Uri _uri;
+  final String _path;
 
   Timer? _errorTimer;
 
@@ -38,10 +40,9 @@ class SseClientHtml extends StreamChannelMixin<String> implements SseClient {
 
   /// [serverUrl] is the URL under which the server is listening for
   /// incoming bi-directional SSE connections.
-  SseClientHtml(String serverUrl) {
-    _eventSource =
-        EventSource('$serverUrl?sseClientId=$_clientId', withCredentials: true);
-    _serverUrl = '$serverUrl?sseClientId=$_clientId';
+  SseClientHtml(this._uri, this._path) {
+    _serverUrl = _uri.toString() + _path + '?sseClientId=$_clientId';
+    _eventSource = EventSource(_serverUrl, withCredentials: true);
     _eventSource.onOpen.first.whenComplete(() {
       _onConnected.complete();
       _outgoingController.stream

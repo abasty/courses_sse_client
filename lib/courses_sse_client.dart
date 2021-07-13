@@ -16,8 +16,8 @@ abstract class SseClient extends StreamChannelMixin<String> {
   String get clientId;
 
   /// Returns a new [SseClient]
-  factory SseClient.fromUrl(String serverUrl) {
-    return getSseClient(serverUrl);
+  factory SseClient.fromUriAndPath(Uri uri, String path) {
+    return getSseClient(uri, path);
   }
 
   /// Closes the [SseClient]
