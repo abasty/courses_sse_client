@@ -42,7 +42,7 @@ class SseClientHtml extends StreamChannelMixin<String> implements SseClient {
   /// incoming bi-directional SSE connections.
   SseClientHtml(this._uri, this._path) {
     _serverUrl = _uri.toString() + _path + '?sseClientId=$_clientId';
-    _eventSource = EventSource(_serverUrl, withCredentials: true);
+    _eventSource = EventSource(_serverUrl, withCredentials: false);
     _eventSource.onOpen.first.whenComplete(() {
       _onConnected.complete();
       _outgoingController.stream
