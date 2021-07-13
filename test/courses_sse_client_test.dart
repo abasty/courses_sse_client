@@ -11,6 +11,9 @@ import 'package:sse/server/sse_handler.dart';
 import 'package:test/test.dart';
 
 void main() async {
+  var ngrok = Platform.environment['NGROK'];
+  dynamic ngrok_skipped = ngrok != null ? false : 'No NGROK environment';
+
   await local_server();
 
   test('Connexion', () async {
@@ -24,6 +27,29 @@ void main() async {
     client.close();
     client2.close();
   });
+
+  test(
+    'Connexion ngrok',
+    () async {
+      var data = <String>[];
+      var uri_ngrok = Uri(
+        scheme: 'https',
+        host: ngrok! + '.eu.ngrok.io',
+        userInfo: 'root:toor',
+      );
+      var client = SseClient.fromUriAndPath(uri_ngrok, path);
+      await client.onConnected;
+      client.stream.listen((event) => data.add(event), cancelOnError: true);
+      var client2 = SseClient.fromUriAndPath(uri_ngrok, path);
+      await client2.onConnected;
+      client2.stream.listen((event) => data.add(event), cancelOnError: true);
+      // Attend deux secondes puis ferme le client
+      await Future.delayed(Duration(seconds: 2));
+      client.close();
+      client2.close();
+    },
+    skip: ngrok_skipped,
+  );
 
   test(
     'Déconnexion client',
