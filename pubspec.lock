@@ -271,8 +271,8 @@ packages:
     dependency: "direct dev"
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: f9ad8b9c7bc8833e345b3552493530b3b4fb3824
+      ref: ngrok
+      resolved-ref: db18107a66800976b9e0f4f951794047366aaaf4
       url: "git@github.com:abasty/restserver.git"
     source: git
     version: "3.0.0"

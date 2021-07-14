@@ -3,7 +3,7 @@ description: Ce package implémente un client SSE sur dart:io et dart:html
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.4.3
+version: 1.4.4
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -15,6 +15,8 @@ dev_dependencies:
   test:
   pedantic: ^1.11.0
   restserver:
-    git: git@github.com:abasty/restserver.git
+    git:
+      url: git@github.com:abasty/restserver.git
+      ref: ngrok
   shelf:
   sse:
