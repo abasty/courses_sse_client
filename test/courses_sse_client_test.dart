@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:courses_sse_client/courses_sse_client.dart' show SseClient;
+import 'package:http/http.dart';
 import 'package:restserver/courses_db_storage.dart';
 import 'package:restserver/courses_sse.dart';
 import 'package:restserver/mapdb.dart';
@@ -30,8 +31,6 @@ void main() async {
 
   test(
     'Connexion ngrok',
-    // TODO: Added zoned? Or Zoned on/sync request?
-    // <https://dart.dev/articles/archive/zones#handling-asynchronous-errors>
     () async {
       var data = <String>[];
       var uri_ngrok = Uri(
@@ -44,31 +43,32 @@ void main() async {
       try {
         client = SseClient.fromUriAndPath(uri_ngrok, path);
         await client.onConnected;
-        client.stream.listen((event) => data.add(event), cancelOnError: true);
-      } catch (e) {
-        assert(false, 'Erreur de connexion');
-      }
-
-      try {
         client2 = SseClient.fromUriAndPath(uri_ngrok, path);
         await client2.onConnected;
-        client2.stream.listen((event) => data.add(event), cancelOnError: true);
       } catch (e) {
         assert(false, 'Erreur de connexion');
       }
 
-      // Attend deux secondes puis ferme les clients
-      await Future.delayed(Duration(seconds: 2));
-      try {
-        if (client != null) client.close();
-      } catch (e) {
-        print('');
-      }
-      try {
-        if (client2 != null) client2.close();
-      } catch (e) {
-        print('');
-      }
+      runZonedGuarded(
+        () {
+          client!.stream.listen((event) => data.add(event));
+          client2!.stream.listen((event) => data.add(event));
+        },
+        (e, s) {
+          // Lorsqu'on _close_ un client, il est possible de recevoir une erreur
+          // asynchrone 'Connection closed while receiving data' sur le listen
+          // Cette erreur ne peut pas être attrapée dans un `try / catch` et
+          // remonte donc jusqu'à la zone d'erreur _root_. En exécutant le
+          // `listen` dans sa propre zone d'erreur, on peut _catcher_ cette
+          // `ClientException`. Dans notre cas, ce n'est pas une erreur, le
+          // `close` fait partie du test.
+          assert(e is ClientException);
+          print('OK: $e');
+        },
+      );
+
+      client!.close();
+      client2!.close();
     },
     skip: ngrok_skipped,
   );
