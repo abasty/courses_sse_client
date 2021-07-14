@@ -30,23 +30,45 @@ void main() async {
 
   test(
     'Connexion ngrok',
+    // TODO: Added zoned? Or Zoned on/sync request?
+    // <https://dart.dev/articles/archive/zones#handling-asynchronous-errors>
     () async {
       var data = <String>[];
       var uri_ngrok = Uri(
         scheme: 'https',
         host: ngrok! + '.eu.ngrok.io',
-        userInfo: 'root:toor',
       );
-      var client = SseClient.fromUriAndPath(uri_ngrok, path);
-      await client.onConnected;
-      client.stream.listen((event) => data.add(event), cancelOnError: true);
-      var client2 = SseClient.fromUriAndPath(uri_ngrok, path);
-      await client2.onConnected;
-      client2.stream.listen((event) => data.add(event), cancelOnError: true);
-      // Attend deux secondes puis ferme le client
+      SseClient? client;
+      SseClient? client2;
+
+      try {
+        client = SseClient.fromUriAndPath(uri_ngrok, path);
+        await client.onConnected;
+        client.stream.listen((event) => data.add(event), cancelOnError: true);
+      } catch (e) {
+        assert(false, 'Erreur de connexion');
+      }
+
+      try {
+        client2 = SseClient.fromUriAndPath(uri_ngrok, path);
+        await client2.onConnected;
+        client2.stream.listen((event) => data.add(event), cancelOnError: true);
+      } catch (e) {
+        assert(false, 'Erreur de connexion');
+      }
+
+      // Attend deux secondes puis ferme les clients
       await Future.delayed(Duration(seconds: 2));
-      client.close();
-      client2.close();
+      try {
+        if (client != null) client.close();
+      } catch (e) {
+        print('');
+      }
+      try {
+        if (client2 != null) client2.close();
+      } catch (e) {
+        print('');
+      }
     },
     skip: ngrok_skipped,
   );
