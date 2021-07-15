@@ -48,7 +48,15 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
 
     try {
       // await _incomingController.close();
-      var response = await _client.send(request);
+      var response;
+      try {
+        response = await _client.send(request).timeout(
+              Duration(seconds: 5),
+              onTimeout: () => throw 'timeout',
+            );
+      } catch (e) {
+        throw 'Network error';
+      }
       if (response.statusCode != 200) throw 'Network error';
       _onConnected.complete();
       _incomingController = StreamController<String>(
@@ -57,7 +65,7 @@ class SseClientIo extends StreamChannelMixin<String> implements SseClient {
               .transform(utf8.decoder)
               .transform(LineSplitter())
               .listen(
-            (str) {
+            (String str) {
               if (str.startsWith('data: ')) {
                 str = str.substring(7, str.length - 1).replaceAll('\\"', '"');
                 _incomingController.sink.add(str);
